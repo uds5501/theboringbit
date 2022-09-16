@@ -1,5 +1,7 @@
 package com.uddeshya.explore.model;
 
+import com.uddeshya.explore.utils.BencodeToString;
+
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +42,25 @@ public class BencodeObject <Object> {
             return true;
         if (this.getObjectType() != ((BencodeObject) obj).getObjectType()) return false;
         return this.getObjectData() == ((BencodeObject) obj).getObjectData();
+    }
+
+    @Override
+    public String toString() {
+        if (this.objectType == BencodeObjectType.SPECIAL) {
+            return "SP<"+getValueAsString()+">";
+        }
+        if (this.objectType == BencodeObjectType.STRING) {
+            return "\""+getValueAsString()+"\"";
+        }
+        if (this.objectType == BencodeObjectType.INTEGER) {
+            return "<"+getValueAsInt()+">";
+        }
+        if (this.objectType == BencodeObjectType.LIST) {
+            return BencodeToString.convertFromList(getValueAsList());
+        }
+        else {
+            return BencodeToString.convertFromMap(getValueAsDictionary());
+        }
     }
 }
 
