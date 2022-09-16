@@ -41,7 +41,7 @@ public class BencodeObject <Object> {
         if (obj == this)
             return true;
         if (this.getObjectType() != ((BencodeObject) obj).getObjectType()) return false;
-        return this.getObjectData() == ((BencodeObject) obj).getObjectData();
+        return this.toString().equals(((BencodeObject) obj).toString());
     }
 
     @Override
