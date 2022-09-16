@@ -97,6 +97,7 @@ public class Bencrypter {
                             intData = intData * 10 + (original.charAt(i) - '0');
                             i++;
                         }
+                        i++;
                         stack.push(new BencodeObject(intData, BencodeObjectType.INTEGER));
 
                     } else if (currentCharacter == 'l' || currentCharacter == 'd') {
@@ -105,7 +106,7 @@ public class Bencrypter {
                         i++;
 
                     } else if (currentCharacter == 'e') {
-
+                        i++;
                         List<BencodeObject> localParsedObjects = new ArrayList<>();
                         while (!stack.peek().equals(Constants.DICTIONARY_STARTER) && !stack.peek().equals(Constants.LIST_STARTER)) {
                             localParsedObjects.add(stack.pop());
