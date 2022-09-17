@@ -4,6 +4,8 @@ import com.uddeshya.explore.constants.Constants;
 import com.uddeshya.explore.model.BencodeDecryptionResult;
 import com.uddeshya.explore.model.BencodeObject;
 import com.uddeshya.explore.model.BencodeObjectType;
+import com.uddeshya.explore.model.StringParsingResult;
+import com.uddeshya.explore.utils.StackParser;
 
 import java.util.*;
 
@@ -18,26 +20,16 @@ public class Bencrypter {
                 char currentCharacter = original.charAt(i);
                 if (currentCharacter >= '0' && currentCharacter <= '9') {
 
-                    int stringLength = 0;
-                    while (original.charAt(i) != ':') {
-                        if (original.charAt(i) < '0' || original.charAt(i) > '9') {
-                            return result;
-                        }
-                        stringLength = stringLength * 10 + (original.charAt(i) - '0');
-                        i++;
+                    StringParsingResult parsingResult = StackParser.parseStringFromIndex(original, i);
+                    if (!parsingResult.isSuccess()) {
+                        return result;
                     }
-                    i++;
-                    String str = "";
-                    while (stringLength != 0) {
-                        str += original.charAt(i);
-                        i++;
-                        stringLength--;
-                    }
+                    i += parsingResult.getStringLength() + parsingResult.getStringPrefixLength();
                     if (i != totalLength) {
                         return result;
                     }
                     result.Success = true;
-                    result.Data = new BencodeObject(str, BencodeObjectType.STRING);
+                    result.Data = new BencodeObject(parsingResult.getData(), BencodeObjectType.STRING);
                     return result;
 
                 } else if (currentCharacter == 'i') {
@@ -68,23 +60,12 @@ public class Bencrypter {
 
                     char currentCharacter = original.charAt(i);
                     if (currentCharacter >= '0' && currentCharacter <= '9') {
-
-                        int stringLength = 0;
-                        while (original.charAt(i) != ':') {
-                            if (original.charAt(i) < '0' || original.charAt(i) > '9') {
-                                return result;
-                            }
-                            stringLength = stringLength * 10 + (original.charAt(i) - '0');
-                            i++;
+                        StringParsingResult parsingResult = StackParser.parseStringFromIndex(original, i);
+                        if (!parsingResult.isSuccess()) {
+                            return result;
                         }
-                        i++;
-                        String str = "";
-                        while (stringLength != 0) {
-                            str += original.charAt(i);
-                            i++;
-                            stringLength--;
-                        }
-                        stack.push(new BencodeObject(str, BencodeObjectType.STRING));
+                        i += parsingResult.getStringLength() + parsingResult.getStringPrefixLength();
+                        stack.push(new BencodeObject(parsingResult.getData(), BencodeObjectType.STRING));
 
                     } else if (currentCharacter == 'i') {
 

@@ -34,5 +34,12 @@ public class StringParsingResult {
     public void setStringLength(int stringLength) {
         this.stringLength = stringLength;
     }
+
+    public int getStringPrefixLength() {
+        if (!this.data.isBlank()) {
+            return String.valueOf(this.data.length()).length() + 1;
+        }
+        return 0;
+    }
 }
 
