@@ -1,10 +1,7 @@
 package com.uddeshya.explore.client;
 
 import com.uddeshya.explore.constants.Constants;
-import com.uddeshya.explore.model.BencodeDecryptionResult;
-import com.uddeshya.explore.model.BencodeObject;
-import com.uddeshya.explore.model.BencodeObjectType;
-import com.uddeshya.explore.model.StringParsingResult;
+import com.uddeshya.explore.model.*;
 import com.uddeshya.explore.utils.StackParser;
 
 import java.util.*;
@@ -33,18 +30,13 @@ public class Bencrypter {
                     return result;
 
                 } else if (currentCharacter == 'i') {
-
-                    i++;
-                    int intData = 0;
-                    while (original.charAt(i) != 'e') {
-                        if (original.charAt(i) < '0' || original.charAt(i) > '9') {
-                            return result;
-                        }
-                        intData = intData * 10 + (original.charAt(i) - '0');
-                        i++;
+                    IntegerParsingResult integerParsingResult = StackParser.parseIntegerFromIndex(original, i);
+                    if (!integerParsingResult.isSuccess()) {
+                        return result;
                     }
+                    i += String.valueOf(integerParsingResult.getData()).length() + 2;
                     result.Success = true;
-                    result.Data = new BencodeObject(intData, BencodeObjectType.INTEGER);
+                    result.Data = new BencodeObject(integerParsingResult.getData(), BencodeObjectType.INTEGER);
                     return result;
 
                 } else {
@@ -68,18 +60,12 @@ public class Bencrypter {
                         stack.push(new BencodeObject(parsingResult.getData(), BencodeObjectType.STRING));
 
                     } else if (currentCharacter == 'i') {
-
-                        i++;
-                        int intData = 0;
-                        while (original.charAt(i) != 'e') {
-                            if (original.charAt(i) < '0' || original.charAt(i) > '9') {
-                                return result;
-                            }
-                            intData = intData * 10 + (original.charAt(i) - '0');
-                            i++;
+                        IntegerParsingResult integerParsingResult = StackParser.parseIntegerFromIndex(original, i);
+                        if (!integerParsingResult.isSuccess()) {
+                            return result;
                         }
-                        i++;
-                        stack.push(new BencodeObject(intData, BencodeObjectType.INTEGER));
+                        i += String.valueOf(integerParsingResult.getData()).length() + 2;
+                        stack.push(new BencodeObject(integerParsingResult.getData(), BencodeObjectType.INTEGER));
 
                     } else if (currentCharacter == 'l' || currentCharacter == 'd') {
 
