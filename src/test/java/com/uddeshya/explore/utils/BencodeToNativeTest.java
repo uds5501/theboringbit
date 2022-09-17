@@ -16,10 +16,10 @@ public class BencodeToNativeTest {
     private static Stream<Arguments> fetchListAndExpectedString() {
         return Stream.of(
                 Arguments.of(List.of(
-                        new BencodeObject("abcd", BencodeObjectType.STRING),
-                        new BencodeObject(561, BencodeObjectType.INTEGER),
-                        new BencodeObject(List.of(
-                                new BencodeObject("creep", BencodeObjectType.STRING)), BencodeObjectType.LIST)),
+                                new BencodeObject("abcd", BencodeObjectType.STRING),
+                                new BencodeObject(561, BencodeObjectType.INTEGER),
+                                new BencodeObject(List.of(
+                                        new BencodeObject("creep", BencodeObjectType.STRING)), BencodeObjectType.LIST)),
                         "LIST[\"abcd\",<561>,LIST[\"creep\"]]"
                 ),
                 Arguments.of(List.of(
@@ -29,7 +29,7 @@ public class BencodeToNativeTest {
                                         new BencodeObject(561, BencodeObjectType.INTEGER),
                                         new BencodeObject(189, BencodeObjectType.INTEGER),
                                         new BencodeObject("dance", BencodeObjectType.STRING)), BencodeObjectType.LIST)
-                                ),
+                        ),
                         "LIST[\"abcd\",LIST[\"creep\",<561>,<189>,\"dance\"]]"
                 )
         );
@@ -38,16 +38,24 @@ public class BencodeToNativeTest {
     private static Stream<Arguments> fetchDictAndExpectedString() {
         return Stream.of(
                 Arguments.of(Map.of(
-                        "a",
-                        new BencodeObject("b", BencodeObjectType.STRING),
-                        "ab",
-                        new BencodeObject(List.of(
-                                new BencodeObject("abra", BencodeObjectType.STRING)),
-                                BencodeObjectType.LIST)
+                                "a",
+                                new BencodeObject("b", BencodeObjectType.STRING),
+                                "ab",
+                                new BencodeObject(List.of(
+                                        new BencodeObject("abra", BencodeObjectType.STRING)),
+                                        BencodeObjectType.LIST)
                         ),
-                "DICT{ab:LIST[\"abra\"],a:\"b\"}"
+                        "DICT{ab:LIST[\"abra\"],a:\"b\"}"
+                ),
+                Arguments.of(Map.of(
+                                "key1",
+                                new BencodeObject("v1", BencodeObjectType.STRING),
+                                "key2",
+                                new BencodeObject(2, BencodeObjectType.INTEGER)
+                        ),
+                        "DICT{key1:\"v1\",key2:<2>}"
                 )
-            );
+        );
     }
 
     @ParameterizedTest

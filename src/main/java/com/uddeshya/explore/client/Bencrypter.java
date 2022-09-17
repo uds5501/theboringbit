@@ -12,7 +12,7 @@ public class Bencrypter {
         BencodeDecryptionResult result = new BencodeDecryptionResult(false, new BencodeObject("Error", BencodeObjectType.SPECIAL));
         Stack<BencodeObject> stack = new Stack();
         int totalLength = original.length();
-        for (int i=0; i<totalLength; i++) {
+        for (int i = 0; i < totalLength; i++) {
             if (i == 0) {
 
                 char currentCharacter = original.charAt(i);
@@ -57,8 +57,8 @@ public class Bencrypter {
 
                 } else {
 
-                    stack.push(new BencodeObject('$', BencodeObjectType.SPECIAL));
-                    stack.push(new BencodeObject(original.charAt(i), BencodeObjectType.SPECIAL));
+                    stack.push(new BencodeObject("$", BencodeObjectType.SPECIAL));
+                    stack.push(new BencodeObject(String.valueOf(original.charAt(i)), BencodeObjectType.SPECIAL));
 
                 }
 
@@ -102,7 +102,7 @@ public class Bencrypter {
 
                     } else if (currentCharacter == 'l' || currentCharacter == 'd') {
 
-                        stack.push(new BencodeObject(currentCharacter, BencodeObjectType.SPECIAL));
+                        stack.push(new BencodeObject(String.valueOf(currentCharacter), BencodeObjectType.SPECIAL));
                         i++;
 
                     } else if (currentCharacter == 'e') {
@@ -120,11 +120,13 @@ public class Bencrypter {
 
                         } else {
 
-                            if (localParsedObjects.size() % 2 != 0) return result;
+                            if (localParsedObjects.size() % 2 != 0) {
+                                return result;
+                            }
                             stack.pop();
-                            Map<String, BencodeObject> localDict = new HashMap<>();
-                            for(int ptr = 0; ptr<localParsedObjects.size(); ptr+=2) {
-                                localDict.put(localParsedObjects.get(ptr).getValueAsString(), localParsedObjects.get(ptr+1));
+                            Map<String, BencodeObject> localDict = new TreeMap<>();
+                            for (int ptr = 0; ptr < localParsedObjects.size(); ptr += 2) {
+                                localDict.put(localParsedObjects.get(ptr).getValueAsString(), localParsedObjects.get(ptr + 1));
                             }
                             stack.push(new BencodeObject(localDict, BencodeObjectType.DICTIONARY));
 
@@ -144,12 +146,3 @@ public class Bencrypter {
         return result;
     }
 }
-
-// String - length:string --> 3:abc
-// Integers - i<integer>e --> i39427e
-// List --> l1:ai98el1:bee --> [a,9,[b]]
-// Dictionary --> d1:a1:b1:cl1:yi8eee --> {"a": "b", "c": ["y", 8]}
-
-// l1:al1:bee
-// [$, BencodedObj("L", SPECIAL), BencodedObj("a", STRING), BencodedObj(L, SPECIAL),BencodedObj("b", STRING)  ]
-// [$, BencodedObj("L", SPECIAL), BencodedObj("a", STRING), BencodedObj(<"b">, LIST) ]

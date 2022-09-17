@@ -14,8 +14,6 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BencrypterTest {
-    // I want to validate an entered torrent file
-    // I want to decrypt an entered torrent file into some format
     private static Stream<Arguments> getBencodedStrings() {
         return Stream.of(
                 Arguments.of("1:a",
@@ -34,8 +32,17 @@ public class BencrypterTest {
                         ), BencodeObjectType.LIST)),
                 Arguments.of("d4:key12:v14:key2i2ee",
                         new BencodeObject(Map.of(
-                                "key1", "v1",
-                                "key2", 2
+                                "key1", new BencodeObject("v1", BencodeObjectType.STRING),
+                                "key2", new BencodeObject(2, BencodeObjectType.INTEGER)
+                        ), BencodeObjectType.DICTIONARY)),
+                Arguments.of("d2:k1d4:k_l1li21e5:abcdeeee",
+                        new BencodeObject(Map.of(
+                                "k1", new BencodeObject(Map.of(
+                                        "k_l1", new BencodeObject(List.of(
+                                                new BencodeObject(21, BencodeObjectType.INTEGER),
+                                                new BencodeObject("abcde", BencodeObjectType.STRING)
+                                        ), BencodeObjectType.LIST)
+                                ), BencodeObjectType.DICTIONARY)
                         ), BencodeObjectType.DICTIONARY))
         );
     }
