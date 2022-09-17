@@ -9,12 +9,25 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BencrypterTest {
     private static Stream<Arguments> getBencodedStrings() {
+        Map<String, BencodeObject> expectedMap1 = new TreeMap<>();
+        Map<String, BencodeObject> expectedMap2 = new TreeMap<>();
+        Map<String, BencodeObject> expectedMap3 = new TreeMap<>();
+
+        expectedMap1.put("key1", new BencodeObject("v1", BencodeObjectType.STRING));
+        expectedMap1.put("key2", new BencodeObject(2, BencodeObjectType.INTEGER));
+        expectedMap3.put("k_l1", new BencodeObject(List.of(
+                new BencodeObject(21, BencodeObjectType.INTEGER),
+                new BencodeObject("abcde", BencodeObjectType.STRING)
+        ), BencodeObjectType.LIST));
+        expectedMap2.put("k1", new BencodeObject(expectedMap3, BencodeObjectType.DICTIONARY));
+
         return Stream.of(
                 Arguments.of("1:a",
                         new BencodeObject("a", BencodeObjectType.STRING)),
@@ -31,19 +44,9 @@ public class BencrypterTest {
                                 )
                         ), BencodeObjectType.LIST)),
                 Arguments.of("d4:key12:v14:key2i2ee",
-                        new BencodeObject(Map.of(
-                                "key1", new BencodeObject("v1", BencodeObjectType.STRING),
-                                "key2", new BencodeObject(2, BencodeObjectType.INTEGER)
-                        ), BencodeObjectType.DICTIONARY)),
+                        new BencodeObject(expectedMap1, BencodeObjectType.DICTIONARY)),
                 Arguments.of("d2:k1d4:k_l1li21e5:abcdeeee",
-                        new BencodeObject(Map.of(
-                                "k1", new BencodeObject(Map.of(
-                                        "k_l1", new BencodeObject(List.of(
-                                                new BencodeObject(21, BencodeObjectType.INTEGER),
-                                                new BencodeObject("abcde", BencodeObjectType.STRING)
-                                        ), BencodeObjectType.LIST)
-                                ), BencodeObjectType.DICTIONARY)
-                        ), BencodeObjectType.DICTIONARY))
+                        new BencodeObject(expectedMap2, BencodeObjectType.DICTIONARY))
         );
     }
 

@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,23 +37,20 @@ public class BencodeToNativeTest {
     }
 
     private static Stream<Arguments> fetchDictAndExpectedString() {
+        TreeMap<String, BencodeObject> dict1 = new TreeMap<>();
+        dict1.put("a", new BencodeObject("b", BencodeObjectType.STRING));
+        dict1.put("ab", new BencodeObject(List.of(
+                new BencodeObject("abra", BencodeObjectType.STRING)), BencodeObjectType.LIST));
+
+        TreeMap<String, BencodeObject> dict2 = new TreeMap<>();
+        dict2.put("key1", new BencodeObject("v1", BencodeObjectType.STRING));
+        dict2.put("key2", new BencodeObject(2, BencodeObjectType.INTEGER));
+
         return Stream.of(
-                Arguments.of(Map.of(
-                                "a",
-                                new BencodeObject("b", BencodeObjectType.STRING),
-                                "ab",
-                                new BencodeObject(List.of(
-                                        new BencodeObject("abra", BencodeObjectType.STRING)),
-                                        BencodeObjectType.LIST)
-                        ),
-                        "DICT{ab:LIST[\"abra\"],a:\"b\"}"
+                Arguments.of(dict1,
+                        "DICT{a:\"b\",ab:LIST[\"abra\"]}"
                 ),
-                Arguments.of(Map.of(
-                                "key1",
-                                new BencodeObject("v1", BencodeObjectType.STRING),
-                                "key2",
-                                new BencodeObject(2, BencodeObjectType.INTEGER)
-                        ),
+                Arguments.of(dict2,
                         "DICT{key1:\"v1\",key2:<2>}"
                 )
         );
