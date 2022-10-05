@@ -30,5 +30,4 @@ public class TrackerConnectRequest {
     public TrackerConnectRequest(int transactionID) {
         this.transactionID = transactionID;
     }
-
 }

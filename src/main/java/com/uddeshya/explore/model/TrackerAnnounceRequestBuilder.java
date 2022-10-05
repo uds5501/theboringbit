@@ -13,56 +13,69 @@ public class TrackerAnnounceRequestBuilder {
     private int key;
     private int num_want;
 
-    public void setConnectionID(long connectionID) {
+    public TrackerAnnounceRequestBuilder setConnectionID(long connectionID) {
         this.connectionID = connectionID;
+        return this;
     }
 
-    public void setAction(int action) {
+    public TrackerAnnounceRequestBuilder setAction(int action) {
         this.action = action;
+        return this;
     }
 
-    public void setTransactionID(int transactionID) {
+    public TrackerAnnounceRequestBuilder setTransactionID(int transactionID) {
         this.transactionID = transactionID;
+        return this;
     }
 
-    public void setInfoHash(String infoHash) {
+    public TrackerAnnounceRequestBuilder setInfoHash(String infoHash) {
         this.infoHash = infoHash;
+        return this;
     }
 
-    public void setPeerID(String peerID) {
+    public TrackerAnnounceRequestBuilder setPeerID(String peerID) {
         this.peerID = peerID;
+        return this;
     }
 
-    public void setDownloaded(long downloaded) {
+    public TrackerAnnounceRequestBuilder setDownloaded(long downloaded) {
         this.downloaded = downloaded;
+        return this;
     }
 
-    public void setLeft(long left) {
+    public TrackerAnnounceRequestBuilder setLeft(long left) {
         this.left = left;
+        return this;
     }
 
-    public void setUploaded(long uploaded) {
+    public TrackerAnnounceRequestBuilder setUploaded(long uploaded) {
         this.uploaded = uploaded;
+        return this;
     }
 
-    public void setEvent(int event) {
+    public TrackerAnnounceRequestBuilder setEvent(int event) {
         this.event = event;
+        return this;
     }
 
-    public void setIPAddress(int IPAddress) {
+    public TrackerAnnounceRequestBuilder setIPAddress(int IPAddress) {
         this.IPAddress = IPAddress;
+        return this;
     }
 
-    public void setKey(int key) {
+    public TrackerAnnounceRequestBuilder setKey(int key) {
         this.key = key;
+        return this;
     }
 
-    public void setNum_want(int num_want) {
+    public TrackerAnnounceRequestBuilder setNum_want(int num_want) {
         this.num_want = num_want;
+        return this;
     }
 
-    public void setPort(short port) {
+    public TrackerAnnounceRequestBuilder setPort(short port) {
         this.port = port;
+        return this;
     }
 
     private short port;
