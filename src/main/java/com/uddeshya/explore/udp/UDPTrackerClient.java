@@ -1,16 +1,17 @@
 package com.uddeshya.explore.udp;
 
-import com.uddeshya.explore.model.TrackerConnectRequest;
-import com.uddeshya.explore.model.TrackerConnectResponse;
-import com.uddeshya.explore.model.TrackerScrapeRequest;
-import com.uddeshya.explore.model.TrackerScrapeResponse;
+import com.uddeshya.explore.model.*;
 
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
-import static com.uddeshya.explore.constants.TrackerConstants.ACTION_ERROR;
+import static com.uddeshya.explore.model.TrackerAnnounceResponse.parseBytesToTrackerAnnounceResponse;
+import static com.uddeshya.explore.model.TrackerConnectResponse.parseBytesToTrackerResponse;
+import static com.uddeshya.explore.model.TrackerScrapeResponse.parseBytesToTrackerScrapeResponse;
 
 public class UDPTrackerClient extends UDPClient {
     public static final int SCRAPE_RESPONSE_LENGTH = 20;
@@ -21,43 +22,43 @@ public class UDPTrackerClient extends UDPClient {
         super(hostName, port);
     }
 
-    public TrackerConnectResponse connect() throws IOException {
+    public void connect() throws IOException {
         TrackerConnectRequest request = new TrackerConnectRequest();
         byte[] buf = parseRequestToBytes(request);
         byte[] responseBuffer = dispatchRequest(buf, CONNECT_RESPONSE_LENGTH);
         TrackerConnectResponse resp = parseBytesToTrackerResponse(responseBuffer);
         this.connectionID = resp.getConnectionID();
-        return resp;
     }
 
     public TrackerScrapeResponse scrape() throws IOException {
         try {
-            TrackerScrapeRequest request = new TrackerScrapeRequest(this.connectionID, "A4128E0CFFDC3DBE4067CD1A7366AB9B01051774");
+            TrackerScrapeRequest request = new TrackerScrapeRequest(this.connectionID, "20d0b46b041e66d7d0ff149c52eef95e71fca810");
             byte[] buf = request.parseRequestToBytes();
             byte[] responseBuffer = dispatchRequest(buf, SCRAPE_RESPONSE_LENGTH);
-            TrackerScrapeResponse resp = parseBytesToTrackerScrapeResponse(responseBuffer);
-            return resp;
+            return parseBytesToTrackerScrapeResponse(responseBuffer);
         } catch (IOException e) {
             System.out.println(e);
         }
         return null;
     }
 
-    private TrackerScrapeResponse parseBytesToTrackerScrapeResponse(byte[] responseBuffer) {
-        ByteBuffer fetchedBytes = ByteBuffer.wrap(responseBuffer);
-        int action = fetchedBytes.getInt();
-        int transactionId = fetchedBytes.getInt();
-        TrackerScrapeResponse.TrackerScrapeResponseBuilder builder = TrackerScrapeResponse.newBuilder()
-                .setAction(action)
-                .setTransactionId(transactionId);
-        if (action == ACTION_ERROR) {
-            builder = builder.setError(new String(fetchedBytes.array()));
-        } else {
-            builder = builder.setSeeders(fetchedBytes.getInt())
-                    .setCompleted(fetchedBytes.getInt())
-                    .setLeechers(fetchedBytes.getInt());
-        }
-        return builder.build();
+    public TrackerAnnounceResponse announce() throws IOException {
+        TrackerAnnounceRequest request = TrackerAnnounceRequest.newBuilder()
+                .setConnectionID(this.connectionID)
+                .setInfoHash("20d0b46b041e66d7d0ff149c52eef95e71fca810")
+                .setPeerID("-CB0001-yyyyyyyyyyya")
+                .setDownloaded(0L)
+                .setLeft(0)
+                .setUploaded(0L)
+                .setEvent(0)
+                .setIPAddress(0)
+                .setKey(100)
+                .setNum_want(-1)
+                .setPort((short) 80)
+                .build();
+        byte[] buf = request.convertRequestToBytes();
+        byte[] responseBuffer = dispatchRequest(buf, 80);
+        return parseBytesToTrackerAnnounceResponse(responseBuffer);
     }
 
     private byte[] parseRequestToBytes(TrackerConnectRequest req) {
@@ -68,22 +69,19 @@ public class UDPTrackerClient extends UDPClient {
         return buf.array();
     }
 
-
-    private TrackerConnectResponse parseBytesToTrackerResponse(byte[] bytes) {
-        ByteBuffer fetchedBytes = ByteBuffer.wrap(bytes);
-        return TrackerConnectResponse.newBuilder()
-                .setAction(fetchedBytes.getInt())
-                .setTransactionID(fetchedBytes.getInt())
-                .setConnectionID(fetchedBytes.getLong())
-                .build();
-    }
-
     public static void main(String args[]) throws IOException {
-        UDPTrackerClient client = new UDPTrackerClient("explodie.org", 6969);
-        client.connect();
-        System.out.println("Client: " + client);
-        TrackerScrapeResponse resp = client.scrape();
-        System.out.println("Tracker Scrape: " + resp);
+        Map<String, Integer> trackers = new HashMap();
+        trackers.put("open.stealth.si", 80);
+        for (Map.Entry<String, Integer> entry : trackers.entrySet()) {
+            UDPTrackerClient client = new UDPTrackerClient(entry.getKey(), entry.getValue());
+            client.connect();
+            System.out.println("Client: " + client);
+            TrackerAnnounceResponse respAnnounce = client.announce();
+            System.out.println("Announce: " + respAnnounce);
+            TrackerScrapeResponse resp = client.scrape();
+            System.out.println("Tracker Scrape: " + resp);
+            client.close();
+        }
     }
 
     @Override

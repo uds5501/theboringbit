@@ -1,5 +1,9 @@
 package com.uddeshya.explore.model;
 
+import java.nio.ByteBuffer;
+
+import static com.uddeshya.explore.constants.TrackerConstants.ACTION_ERROR;
+
 public class TrackerScrapeResponse {
     private int action;
     private int transactionId;
@@ -56,6 +60,23 @@ public class TrackerScrapeResponse {
                 ", leechers=" + leechers +
                 ", error='" + error + '\'' +
                 '}';
+    }
+
+    public static TrackerScrapeResponse parseBytesToTrackerScrapeResponse(byte[] responseBuffer) {
+        ByteBuffer fetchedBytes = ByteBuffer.wrap(responseBuffer);
+        int action = fetchedBytes.getInt();
+        int transactionId = fetchedBytes.getInt();
+        TrackerScrapeResponse.TrackerScrapeResponseBuilder builder = TrackerScrapeResponse.newBuilder()
+                .setAction(action)
+                .setTransactionId(transactionId);
+        if (action == ACTION_ERROR) {
+            builder = builder.setError(new String(fetchedBytes.array()));
+        } else {
+            builder = builder.setSeeders(fetchedBytes.getInt())
+                    .setCompleted(fetchedBytes.getInt())
+                    .setLeechers(fetchedBytes.getInt());
+        }
+        return builder.build();
     }
 
     public static class TrackerScrapeResponseBuilder {

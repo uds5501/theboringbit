@@ -36,10 +36,10 @@ public class TrackerScrapeRequest {
 
     public byte[] parseRequestToBytes() {
         ByteBuffer buf = ByteBuffer.allocate(56);
-        buf.putLong(this.connectionID);
-        buf.putInt(this.action);
+        buf.putLong(this.connectionID); // 8
+        buf.putInt(this.action); // 4
         buf.putInt(this.transactionID);
-        buf.put(this.infoHash.getBytes());
+        buf.put(this.infoHash.getBytes()); // 40
         return buf.array();
     }
 }

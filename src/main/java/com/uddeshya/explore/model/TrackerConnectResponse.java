@@ -1,9 +1,12 @@
 package com.uddeshya.explore.model;
 
 
+import java.nio.ByteBuffer;
+
 public class TrackerConnectResponse {
-    private int action;
-    private int transactionID;
+    private final int action;
+    private final int transactionID;
+    private final long connectionID;
 
     public int getAction() {
         return action;
@@ -17,12 +20,19 @@ public class TrackerConnectResponse {
         return connectionID;
     }
 
-    private long connectionID;
-
-    public TrackerConnectResponse(int action, int transactionID, long connectionID) {
+    private TrackerConnectResponse(int action, int transactionID, long connectionID) {
         this.action = action;
         this.transactionID = transactionID;
         this.connectionID = connectionID;
+    }
+
+    public static TrackerConnectResponse parseBytesToTrackerResponse(byte[] bytes) {
+        ByteBuffer fetchedBytes = ByteBuffer.wrap(bytes);
+        return TrackerConnectResponse.newBuilder()
+                .setAction(fetchedBytes.getInt())
+                .setTransactionID(fetchedBytes.getInt())
+                .setConnectionID(fetchedBytes.getLong())
+                .build();
     }
 
     public static TrackerConnectResponseBuilder newBuilder() {

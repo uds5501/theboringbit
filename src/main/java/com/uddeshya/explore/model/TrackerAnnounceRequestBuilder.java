@@ -1,8 +1,6 @@
 package com.uddeshya.explore.model;
 public class TrackerAnnounceRequestBuilder {
     private long connectionID;
-    private int action;
-    private int transactionID;
     private String infoHash;
     private String peerID;
     private long downloaded;
@@ -18,15 +16,6 @@ public class TrackerAnnounceRequestBuilder {
         return this;
     }
 
-    public TrackerAnnounceRequestBuilder setAction(int action) {
-        this.action = action;
-        return this;
-    }
-
-    public TrackerAnnounceRequestBuilder setTransactionID(int transactionID) {
-        this.transactionID = transactionID;
-        return this;
-    }
 
     public TrackerAnnounceRequestBuilder setInfoHash(String infoHash) {
         this.infoHash = infoHash;
@@ -83,7 +72,7 @@ public class TrackerAnnounceRequestBuilder {
     public TrackerAnnounceRequestBuilder() {}
 
     public TrackerAnnounceRequest build() {
-        return new TrackerAnnounceRequest(this.connectionID, this.action, this.transactionID,
+        return new TrackerAnnounceRequest(this.connectionID,
                 this.infoHash, this.peerID, this.downloaded, this.left, this.uploaded, this.event,
                 this.IPAddress, this.key, this.num_want, this.port);
     }
