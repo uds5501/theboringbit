@@ -5,6 +5,7 @@ public class Tracker {
     private final String host;
     private final int port;
 
+
     public String getProtocol() {
         return protocol;
     }
@@ -15,6 +16,14 @@ public class Tracker {
 
     public int getPort() {
         return port;
+    }
+    @Override
+    public String toString() {
+        return "Tracker{" +
+                "protocol='" + protocol + '\'' +
+                ", host='" + host + '\'' +
+                ", port=" + port +
+                '}';
     }
 
     private Tracker(String protocol, String host, int port) {

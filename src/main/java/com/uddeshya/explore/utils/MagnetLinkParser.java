@@ -4,8 +4,6 @@ import com.uddeshya.explore.model.TorrentInfo;
 import com.uddeshya.explore.model.Tracker;
 
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,7 @@ public class MagnetLinkParser {
         String decodedLink = URLDecoder.decode(magnetLink, UTF_ENCODING);
         String[] lists = decodedLink.split("&");
         TorrentInfo.TorrentInfoBuilder infoBuilder = TorrentInfo.newBuilder();
-        List<URL> trackerList = new ArrayList<>();
+        List<Tracker> trackerList = new ArrayList<>();
         for (String listEntry : lists) {
             if (listEntry.contains("xt=")) {
                 String[] splitMagnet = listEntry.split(":");
@@ -27,23 +25,26 @@ public class MagnetLinkParser {
             } else if (listEntry.contains("dn=")) {
                 infoBuilder = infoBuilder.setDisplayName(listEntry.substring(3));
             } else if (listEntry.contains("tr=")) {
-                try {
-                    trackerList.add(new URL(listEntry.substring(3)));
-                } catch (MalformedURLException e) {
-                    System.out.println("malformed URL");
-                }
+                trackerList.add(extractTrackerFromURL(listEntry.substring(3)));
+
             }
         }
         infoBuilder.setTrackerURLs(trackerList);
         return infoBuilder.build();
     }
 
-    public static void main(String[] args) {
-        try {
-            TorrentInfo info = MagnetLinkParser.parseFromMagnetLink(MAGNET_LINK);
-            System.out.println(info);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+    public static Tracker extractTrackerFromURL(String url) {
+        String[] list = url.split("://");
+        Tracker.TrackerBuilder builder = Tracker.newBuilder();
+        builder = builder.setProtocol(list[0]);
+
+        String domainString = list[1].split("/")[0];
+        list = domainString.split(":");
+
+        return builder
+                .setHost(list[0])
+                .setPort(Integer.parseInt(list[1]))
+                .build();
     }
+
 }

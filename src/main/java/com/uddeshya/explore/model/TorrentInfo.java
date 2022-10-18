@@ -1,12 +1,11 @@
 package com.uddeshya.explore.model;
 
-import java.net.URL;
 import java.util.List;
 
 public class TorrentInfo {
     private final String infoHash;
     private final String displayName;
-    private final List<URL> trackerURLs;
+    private final List<Tracker> trackerList;
 
     public String getInfoHash() {
         return infoHash;
@@ -16,14 +15,14 @@ public class TorrentInfo {
         return displayName;
     }
 
-    public List<URL> getTrackerURLs() {
-        return trackerURLs;
+    public List<Tracker> getTrackerList() {
+        return trackerList;
     }
 
-    private TorrentInfo(String infoHash, String displayName, List<URL> trackerURLs) {
+    private TorrentInfo(String infoHash, String displayName, List<Tracker> trackerList) {
         this.infoHash = infoHash;
         this.displayName = displayName;
-        this.trackerURLs = trackerURLs;
+        this.trackerList = trackerList;
     }
 
     @Override
@@ -31,7 +30,7 @@ public class TorrentInfo {
         return "TorrentInfo{" +
                 "infoHash='" + infoHash + '\'' +
                 ", displayName='" + displayName + '\'' +
-                ", trackerURLs=" + trackerURLs +
+                ", trackerList=" + trackerList +
                 '}';
     }
 
@@ -42,7 +41,7 @@ public class TorrentInfo {
     public static class TorrentInfoBuilder {
         private String infoHash;
         private String displayName;
-        private List<URL> trackerURLs;
+        private List<Tracker> trackerURLs;
 
         public TorrentInfoBuilder setInfoHash(String infoHash) {
             this.infoHash = infoHash;
@@ -54,7 +53,7 @@ public class TorrentInfo {
             return this;
         }
 
-        public TorrentInfoBuilder setTrackerURLs(List<URL> trackerURLs) {
+        public TorrentInfoBuilder setTrackerURLs(List<Tracker> trackerURLs) {
             this.trackerURLs = trackerURLs;
             return this;
         }
